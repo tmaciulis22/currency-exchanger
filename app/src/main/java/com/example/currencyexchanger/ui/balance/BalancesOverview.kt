@@ -1,8 +1,12 @@
 package com.example.currencyexchanger.ui.balance
 
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
+import com.example.currencyexchanger.data.model.Balance
 
 @Composable
-fun BalancesOverview() {
+fun BalancesOverview(balances: List<Balance>) {
+    LazyRow {
 
+    }
 }
