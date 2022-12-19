@@ -1,4 +1,4 @@
-package com.example.currencyexchanger.ui.balance
+package com.example.currencyexchanger.ui.view.balance
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
