@@ -20,8 +20,6 @@ class ExchangeRatesRepository(
                 entities.map { ExchangeRate(it.base, it.rates) }
             }
 
-    suspend fun getExchangeRate(base: Currency) = exchangeRatesEntityDAO.get(base)
-
     suspend fun updateExchangeRates(base: Currency, symbols: List<Currency>) {
         exchangeRatesEndpoint.getLatestExchangeRate(base, symbols).getOrNull()?.let {
             exchangeRatesEntityDAO.insert(ExchangeRateEntity(it.base, it.rates))
