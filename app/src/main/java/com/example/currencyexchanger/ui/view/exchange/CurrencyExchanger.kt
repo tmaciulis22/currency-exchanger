@@ -8,10 +8,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.currencyexchanger.R
+import com.example.currencyexchanger.data.model.Currency
 import com.example.currencyexchanger.ui.theme.Typography
 
 @Composable
-fun CurrencyExchanger() {
+fun CurrencyExchanger(
+    inputValues: Map<CurrencyInputType, String>,
+    onInputChange: (CurrencyInputType, String) -> Unit,
+    onSelectedCurrency: (CurrencyInputType, Currency) -> Unit
+) {
     Column {
         Text(
             modifier = Modifier.padding(bottom = 18.dp),
@@ -21,14 +26,24 @@ fun CurrencyExchanger() {
         CurrencyInput(
             modifier = Modifier.padding(bottom = 18.dp),
             type = CurrencyInputType.Sell,
-            inputValue = "",
-            onInputChange = {}
+            inputValue = inputValues[CurrencyInputType.Sell] ?: "0.00",
+            onInputChange = {
+                onInputChange(CurrencyInputType.Sell, it)
+            },
+            onSelectedCurrency = {
+                onSelectedCurrency(CurrencyInputType.Sell, it)
+            }
         )
         CurrencyInput(
             modifier = Modifier.padding(bottom = 18.dp),
             type = CurrencyInputType.Receive,
-            inputValue = "1000",
-            onInputChange = {}
+            inputValue = inputValues[CurrencyInputType.Receive] ?: "0.00",
+            onInputChange = {
+                onInputChange(CurrencyInputType.Receive, it)
+            },
+            onSelectedCurrency = {
+                onSelectedCurrency(CurrencyInputType.Receive, it)
+            }
         )
     }
 }

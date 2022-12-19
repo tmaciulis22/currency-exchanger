@@ -23,7 +23,8 @@ fun CurrencyInput(
     modifier: Modifier = Modifier,
     type: CurrencyInputType,
     inputValue: String,
-    onInputChange: (String) -> Unit
+    onInputChange: (String) -> Unit,
+    onSelectedCurrency: (Currency) -> Unit
 ) {
     Row(
         modifier = modifier,
@@ -54,7 +55,7 @@ fun CurrencyInput(
                 backgroundColor = Color.Transparent,
             )
         )
-        CurrencySelector(currencies = Currency.values().toList(), onSelectedCurrency = {})
+        CurrencySelector(currencies = Currency.values().toList(), onSelectedCurrency = onSelectedCurrency)
     }
 }
 
