@@ -16,7 +16,7 @@ import com.example.currencyexchanger.ui.theme.Typography
 
 @Composable
 fun BalancesOverview(balances: List<Balance>) {
-    Column(modifier = Modifier.padding(24.dp)) {
+    Column {
         Text(
             text = stringResource(R.string.balances_overview_title),
             style = Typography.subtitle1

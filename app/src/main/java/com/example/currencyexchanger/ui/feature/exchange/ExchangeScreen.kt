@@ -1,12 +1,16 @@
 package com.example.currencyexchanger.ui.feature.exchange
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.currencyexchanger.ui.view.balance.BalancesOverview
+import com.example.currencyexchanger.ui.view.exchange.CurrencyExchanger
 
 @Composable
 fun ExchangeScreen(
@@ -15,5 +19,11 @@ fun ExchangeScreen(
 ) {
     val state = exchangeViewModel.balances.collectAsState()
 
-    BalancesOverview(balances = state.value)
+    Column(
+        modifier = Modifier.padding(32.dp),
+        verticalArrangement = Arrangement.spacedBy(32.dp)
+    ) {
+        BalancesOverview(balances = state.value)
+        CurrencyExchanger()
+    }
 }

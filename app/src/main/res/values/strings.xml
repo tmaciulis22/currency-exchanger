@@ -2,4 +2,9 @@
     <string name="app_name">Currency Exchanger</string>
 
     <string name="balances_overview_title">My Balances</string>
+
+    <string name="currency_exchanger_title">Currency Exchange</string>
+    <string name="currency_input_sell_icon_description">Arrow upwards</string>
+    <string name="currency_input_receive_icon_description">Arrow downwards</string>
+    <string name="currency_selector_dropdown_icon_description">Arrow downwards</string>
 </resources>
