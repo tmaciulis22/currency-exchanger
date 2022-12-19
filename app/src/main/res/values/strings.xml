@@ -3,6 +3,7 @@
 
     <string name="balances_overview_title">My Balances</string>
 
+    <string name="exchange_screen_action_button_text">Submit</string>
     <string name="currency_exchanger_title">Currency Exchange</string>
     <string name="currency_input_sell_icon_description">Arrow upwards</string>
     <string name="currency_input_receive_icon_description">Arrow downwards</string>

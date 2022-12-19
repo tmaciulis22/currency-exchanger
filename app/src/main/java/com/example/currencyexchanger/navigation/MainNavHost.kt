@@ -10,7 +10,7 @@ import com.example.currencyexchanger.ui.feature.exchange.ExchangeScreen
 fun MainNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Route.Exchange.name) {
         composable(Route.Exchange.name) {
-            ExchangeScreen(navController)
+            ExchangeScreen()
         }
     }
 }

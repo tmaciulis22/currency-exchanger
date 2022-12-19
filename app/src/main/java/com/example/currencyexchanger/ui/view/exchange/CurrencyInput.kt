@@ -2,6 +2,7 @@ package com.example.currencyexchanger.ui.view.exchange
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -12,7 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.currencyexchanger.R
@@ -26,6 +29,8 @@ fun CurrencyInput(
     onInputChange: (String) -> Unit,
     onSelectedCurrency: (Currency) -> Unit
 ) {
+    val focusManager = LocalFocusManager.current
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -48,14 +53,23 @@ fun CurrencyInput(
                     text = type.name
                 )
             },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done,
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { focusManager.clearFocus() }
+            ),
             singleLine = true,
             maxLines = 1,
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.Transparent,
             )
         )
-        CurrencySelector(currencies = Currency.values().toList(), onSelectedCurrency = onSelectedCurrency)
+        CurrencySelector(
+            currencies = Currency.values().toList(),
+            onSelectedCurrency = onSelectedCurrency
+        )
     }
 }
 
