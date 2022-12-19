@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface BalanceEntityDAO {
 
     @Query("SELECT * FROM balanceentity")
-    suspend fun getAll(): Flow<List<BalanceEntity>>
+    fun getAll(): Flow<List<BalanceEntity>>
 
     @Insert
     suspend fun insert(balanceEntity: BalanceEntity)
