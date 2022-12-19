@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.example.currencyexchanger.data.model.Currency
 
 @Entity
-data class ExchangeRatesEntity(
+data class ExchangeRateEntity(
     @PrimaryKey val base: Currency,
     val rates: List<Pair<Currency, Double>>
 )

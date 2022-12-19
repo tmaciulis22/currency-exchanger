@@ -1,6 +1,6 @@
 package com.example.currencyexchanger.data.api.endpoint
 
-import com.example.currencyexchanger.data.api.entity.ExchangeRatesEntity
+import com.example.currencyexchanger.data.api.entity.ExchangeRateEntity
 import com.example.currencyexchanger.data.model.Currency
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -11,5 +11,5 @@ interface ExchangeRatesEndpoint {
     suspend fun getLatestExchangeRates(
         @Query("base") base: Currency,
         @Query("symbols") symbols: List<Currency>
-    ): Result<ExchangeRatesEntity>
+    ): Result<ExchangeRateEntity>
 }
