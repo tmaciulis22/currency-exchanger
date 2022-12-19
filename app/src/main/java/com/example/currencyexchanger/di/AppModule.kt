@@ -2,14 +2,20 @@ package com.example.currencyexchanger.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.currencyexchanger.data.api.endpoint.ExchangeRatesEndpoint
 import com.example.currencyexchanger.data.database.MainDatabase
 import com.example.currencyexchanger.data.database.dao.BalanceEntityDAO
 import com.example.currencyexchanger.data.repository.BalanceRepository
+import com.example.currencyexchanger.data.repository.ExchangeRatesRepository
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -32,9 +38,44 @@ object AppModule {
         return mainDatabase.balanceEntityDAO()
     }
 
+    @Singleton
+    @Provides
+    fun provideOkHttpClient(): OkHttpClient =
+        OkHttpClient()
+            .newBuilder()
+            .addInterceptor { chain ->
+                val request = chain.request()
+                val newRequest = request
+                    .newBuilder()
+                    .header("apikey", "i1PMfVUbzMxWJlyZ8ONvqnjbdMZnbKYF") // TODO move it to environment file
+                    .build()
+                chain.proceed(newRequest)
+            }
+            .build()
+
+    @Singleton
+    @Provides
+    fun provideRetrofit(moshi: Moshi, client: OkHttpClient): Retrofit =
+        Retrofit.Builder()
+            .baseUrl("https://api.apilayer.com/exchangerates_data/") // TODO move it to environment file
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(client)
+            .build()
+
+    @Singleton
+    @Provides
+    fun provideExchangeRatesEndpoint(retrofit: Retrofit): ExchangeRatesEndpoint =
+        retrofit.create(ExchangeRatesEndpoint::class.java)
+
     @Provides
     @Singleton
     fun provideBalanceRepository(balanceEntityDAO: BalanceEntityDAO): BalanceRepository {
         return BalanceRepository(balanceEntityDAO)
+    }
+
+    @Provides
+    @Singleton
+    fun provideExchangeRateRepository(exchangeRatesEndpoint: ExchangeRatesEndpoint): ExchangeRatesRepository {
+        return ExchangeRatesRepository(exchangeRatesEndpoint)
     }
 }
