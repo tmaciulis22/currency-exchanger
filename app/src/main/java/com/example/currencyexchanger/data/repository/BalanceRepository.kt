@@ -25,11 +25,13 @@ class BalanceRepository(
                 }
             }
 
-    suspend fun insertBalance(balance: Balance) = balanceEntityDAO.insert(
-        BalanceEntity(
-            balance.currency,
-            balance.amount
-        )
+    suspend fun insertBalances(balances: List<Balance>) = balanceEntityDAO.insertAll(
+        balances.map {
+            BalanceEntity(
+                it.currency,
+                it.amount
+            )
+        }
     )
 
     suspend fun deleteBalance(balance: Balance) = balanceEntityDAO.delete(
