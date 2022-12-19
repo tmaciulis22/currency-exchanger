@@ -8,7 +8,7 @@ import retrofit2.http.Query
 interface ExchangeRatesEndpoint {
 
     @GET("latest")
-    suspend fun getLatestExchangeRates(
+    suspend fun getLatestExchangeRate(
         @Query("base") base: Currency,
         @Query("symbols") symbols: List<Currency>
     ): Result<ExchangeRateEntity>

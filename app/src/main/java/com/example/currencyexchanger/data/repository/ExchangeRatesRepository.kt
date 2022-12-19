@@ -21,7 +21,7 @@ class ExchangeRatesRepository(
             }
 
     suspend fun updateExchangeRates(base: Currency, symbols: List<Currency>) {
-        exchangeRatesEndpoint.getLatestExchangeRates(base, symbols).getOrNull()?.let {
+        exchangeRatesEndpoint.getLatestExchangeRate(base, symbols).getOrNull()?.let {
             exchangeRatesEntityDAO.insert(ExchangeRateEntity(it.base, it.rates))
         }
     }

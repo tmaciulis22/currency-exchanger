@@ -1,10 +1,12 @@
 package com.example.currencyexchanger.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.currencyexchanger.data.api.endpoint.ExchangeRatesEndpoint
 import com.example.currencyexchanger.data.database.MainDatabase
 import com.example.currencyexchanger.data.database.dao.BalanceEntityDAO
+import com.example.currencyexchanger.data.database.dao.ExchangeRateEntityDAO
 import com.example.currencyexchanger.data.repository.BalanceRepository
 import com.example.currencyexchanger.data.repository.ExchangeRatesRepository
 import com.squareup.moshi.Moshi
@@ -21,6 +23,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideSharedPreference(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences(
+            "currency-exchanger-prefs", // TODO move it to environment file
+            Context.MODE_PRIVATE
+        )
+    }
 
     @Provides
     @Singleton
@@ -40,32 +51,38 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(): OkHttpClient =
-        OkHttpClient()
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient()
             .newBuilder()
             .addInterceptor { chain ->
                 val request = chain.request()
                 val newRequest = request
                     .newBuilder()
-                    .header("apikey", "i1PMfVUbzMxWJlyZ8ONvqnjbdMZnbKYF") // TODO move it to environment file
+                    .header(
+                        "apikey",
+                        "i1PMfVUbzMxWJlyZ8ONvqnjbdMZnbKYF" // TODO move it to environment file
+                    )
                     .build()
                 chain.proceed(newRequest)
             }
             .build()
+    }
 
     @Singleton
     @Provides
-    fun provideRetrofit(moshi: Moshi, client: OkHttpClient): Retrofit =
-        Retrofit.Builder()
+    fun provideRetrofit(moshi: Moshi, client: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
             .baseUrl("https://api.apilayer.com/exchangerates_data/") // TODO move it to environment file
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(client)
             .build()
+    }
 
     @Singleton
     @Provides
-    fun provideExchangeRatesEndpoint(retrofit: Retrofit): ExchangeRatesEndpoint =
-        retrofit.create(ExchangeRatesEndpoint::class.java)
+    fun provideExchangeRatesEndpoint(retrofit: Retrofit): ExchangeRatesEndpoint {
+        return retrofit.create(ExchangeRatesEndpoint::class.java)
+    }
 
     @Provides
     @Singleton
@@ -75,7 +92,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideExchangeRateRepository(exchangeRatesEndpoint: ExchangeRatesEndpoint): ExchangeRatesRepository {
-        return ExchangeRatesRepository(exchangeRatesEndpoint)
+    fun provideExchangeRateRepository(
+        exchangeRatesEndpoint: ExchangeRatesEndpoint,
+        exchangeRateEntityDAO: ExchangeRateEntityDAO
+    ): ExchangeRatesRepository {
+        return ExchangeRatesRepository(
+            exchangeRatesEndpoint,
+            exchangeRateEntityDAO
+        )
     }
 }
