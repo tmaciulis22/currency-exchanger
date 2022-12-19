@@ -10,14 +10,13 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ExchangeRatesSynchronizer @Inject constructor(
-    private val exchangeRatesRepository: ExchangeRatesRepository
+class ExchangeRatesSyncManager @Inject constructor(
+    private val exchangeRatesRepository: ExchangeRatesRepository,
+    private val currencies: List<Currency> = Currency.values().toList(),
+    private val refreshRate: Long = REFRESH_RATE_MILLIS
 ) {
 
-    suspend fun start(
-        currencies: List<Currency> = Currency.values().toList(),
-        refreshRate: Long = REFRESH_RATE_MILLIS
-    ) {
+    suspend fun start() {
         coroutineScope {
             flow {
                 while (true) {

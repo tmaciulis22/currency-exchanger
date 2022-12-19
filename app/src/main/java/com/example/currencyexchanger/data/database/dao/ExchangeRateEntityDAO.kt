@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.currencyexchanger.data.database.entity.ExchangeRateEntity
+import com.example.currencyexchanger.data.model.Currency
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -9,6 +9,8 @@ import com.example.currencyexchanger.data.database.dao.BalanceEntityDAO
 import com.example.currencyexchanger.data.database.dao.ExchangeRateEntityDAO
 import com.example.currencyexchanger.data.repository.BalanceRepository
 import com.example.currencyexchanger.data.repository.ExchangeRatesRepository
+import com.example.currencyexchanger.domain.CommissionFeeManager
+import com.example.currencyexchanger.domain.ExchangeRatesSyncManager
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -100,5 +102,21 @@ object AppModule {
             exchangeRatesEndpoint,
             exchangeRateEntityDAO
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideExchangeRatesSyncManager(
+        exchangeRatesRepository: ExchangeRatesRepository
+    ): ExchangeRatesSyncManager {
+        return ExchangeRatesSyncManager(exchangeRatesRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCommissionFeeManager(
+        sharedPreferences: SharedPreferences
+    ): CommissionFeeManager {
+        return CommissionFeeManager(sharedPreferences)
     }
 }
