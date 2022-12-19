@@ -16,13 +16,13 @@ import com.example.currencyexchanger.ui.view.exchange.CurrencyExchanger
 fun ExchangeScreen(
     exchangeViewModel: ExchangeViewModel = hiltViewModel()
 ) {
-    val state = exchangeViewModel.balances.collectAsState()
+    val balances = exchangeViewModel.balances.collectAsState()
 
     Column(
         modifier = Modifier.padding(32.dp),
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        BalancesOverview(balances = state.value)
+        BalancesOverview(balances = balances.value)
         CurrencyExchanger(
             mapOf(),
             {_, _ ->
