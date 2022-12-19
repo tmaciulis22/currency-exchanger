@@ -5,12 +5,13 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.currencyexchanger.data.database.entity.BalanceEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BalanceEntityDAO {
 
     @Query("SELECT * FROM balanceentity")
-    suspend fun getAll(): List<BalanceEntity>
+    suspend fun getAll(): Flow<List<BalanceEntity>>
 
     @Insert
     suspend fun insert(balanceEntity: BalanceEntity)
