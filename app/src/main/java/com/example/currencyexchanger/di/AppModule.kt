@@ -4,14 +4,18 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.currencyexchanger.data.api.endpoint.ExchangeRatesEndpoint
+import com.example.currencyexchanger.data.database.ListRateEntityTypeConverter
 import com.example.currencyexchanger.data.database.MainDatabase
 import com.example.currencyexchanger.data.database.dao.BalanceEntityDAO
-import com.example.currencyexchanger.data.database.dao.ExchangeRateEntityDAO
+import com.example.currencyexchanger.data.database.dao.ExchangeRatesEntityDAO
 import com.example.currencyexchanger.data.repository.BalanceRepository
 import com.example.currencyexchanger.data.repository.ExchangeRatesRepository
+import com.example.currencyexchanger.domain.BalancesManager
 import com.example.currencyexchanger.domain.CommissionFeeManager
+import com.example.currencyexchanger.domain.ConversionManager
 import com.example.currencyexchanger.domain.ExchangeRatesSyncManager
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,11 +24,13 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+object AppModule { // TODO split it to separate modules
 
     @Singleton
     @Provides
@@ -35,20 +41,35 @@ object AppModule {
         )
     }
 
+    @Singleton
+    @Provides
+    fun provideMoshi(): Moshi {
+        return Moshi
+            .Builder()
+            .addLast(KotlinJsonAdapterFactory())
+            .build()
+    }
+
     @Provides
     @Singleton
-    fun provideMainDatabase(@ApplicationContext appContext: Context): MainDatabase {
+    fun provideMainDatabase(@ApplicationContext appContext: Context, moshi: Moshi): MainDatabase {
         return Room.databaseBuilder(
             appContext,
             MainDatabase::class.java,
             "exchanger-database"
-        ).build()
+        ).addTypeConverter(ListRateEntityTypeConverter(moshi)).build()
     }
 
     @Provides
     @Singleton
     fun provideBalanceEntityDAO(mainDatabase: MainDatabase): BalanceEntityDAO {
         return mainDatabase.balanceEntityDAO()
+    }
+
+    @Provides
+    @Singleton
+    fun provideExchangeRatesEntityDAO(mainDatabase: MainDatabase): ExchangeRatesEntityDAO {
+        return mainDatabase.exchangeRatesEntityDAO()
     }
 
     @Singleton
@@ -67,6 +88,9 @@ object AppModule {
                     .build()
                 chain.proceed(newRequest)
             }
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .build()
     }
 
@@ -96,11 +120,11 @@ object AppModule {
     @Singleton
     fun provideExchangeRateRepository(
         exchangeRatesEndpoint: ExchangeRatesEndpoint,
-        exchangeRateEntityDAO: ExchangeRateEntityDAO
+        exchangeRatesEntityDAO: ExchangeRatesEntityDAO
     ): ExchangeRatesRepository {
         return ExchangeRatesRepository(
             exchangeRatesEndpoint,
-            exchangeRateEntityDAO
+            exchangeRatesEntityDAO
         )
     }
 
@@ -118,5 +142,25 @@ object AppModule {
         sharedPreferences: SharedPreferences
     ): CommissionFeeManager {
         return CommissionFeeManager(sharedPreferences)
+    }
+
+    @Provides
+    @Singleton
+    fun provideConversionManager(
+        commissionFeeManager: CommissionFeeManager,
+        exchangeRatesRepository: ExchangeRatesRepository
+    ): ConversionManager {
+        return ConversionManager(
+            commissionFeeManager,
+            exchangeRatesRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideBalancesManager(
+        balanceRepository: BalanceRepository
+    ): BalancesManager {
+        return BalancesManager(balanceRepository)
     }
 }

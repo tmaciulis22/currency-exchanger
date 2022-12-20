@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class ConversionManager @Inject constructor(
     private val commissionFeeManager: CommissionFeeManager,
-    private val exchangeRatesRepository: ExchangeRatesRepository
+    private val exchangeRatesRepository: ExchangeRatesRepository,
 ) {
 
     suspend fun convert(
@@ -15,8 +15,8 @@ class ConversionManager @Inject constructor(
         toCurrency: String
     ): ConversionResult {
         val rates = exchangeRatesRepository.getExchangeRates().rates
-        val fromRate = rates.firstOrNull { it.first == fromCurrency }?.second ?: 1.0
-        val toRate = rates.firstOrNull { it.first == toCurrency }?.second ?: 1.0
+        val fromRate = rates.firstOrNull { it.currency == fromCurrency }?.rate ?: 1.0
+        val toRate = rates.firstOrNull { it.currency == toCurrency }?.rate ?: 1.0
         val rate = toRate / fromRate
 
         val fee = commissionFeeManager.calculateFee(amount, fromRate)

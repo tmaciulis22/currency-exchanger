@@ -8,7 +8,7 @@ import androidx.room.Query
 import com.example.currencyexchanger.data.database.entity.ExchangeRatesEntity
 
 @Dao
-interface ExchangeRateEntityDAO {
+interface ExchangeRatesEntityDAO {
 
     @Query("SELECT * FROM exchangeratesentity WHERE base = :base")
     suspend fun get(base: String = "EUR"): ExchangeRatesEntity // Since we save all rates from EUR to X currency, we use EUR as default base parameter here
