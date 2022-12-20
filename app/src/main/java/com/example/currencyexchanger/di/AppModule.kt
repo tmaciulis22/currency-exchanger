@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.currencyexchanger.data.api.endpoint.ExchangeRatesEndpoint
-import com.example.currencyexchanger.data.database.ListRateEntityTypeConverter
+import com.example.currencyexchanger.data.database.CustomTypeConverters
 import com.example.currencyexchanger.data.database.MainDatabase
 import com.example.currencyexchanger.data.database.dao.BalanceEntityDAO
 import com.example.currencyexchanger.data.database.dao.ExchangeRatesEntityDAO
@@ -24,7 +24,6 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -57,7 +56,9 @@ object AppModule { // TODO split it to separate modules
             appContext,
             MainDatabase::class.java,
             "exchanger-database"
-        ).addTypeConverter(ListRateEntityTypeConverter(moshi)).build()
+        )
+            .addTypeConverter(CustomTypeConverters(moshi))
+            .build()
     }
 
     @Provides

@@ -3,9 +3,7 @@ package com.example.currencyexchanger.data.repository
 import com.example.currencyexchanger.data.api.endpoint.ExchangeRatesEndpoint
 import com.example.currencyexchanger.data.database.dao.ExchangeRatesEntityDAO
 import com.example.currencyexchanger.data.database.entity.ExchangeRatesEntity
-import com.example.currencyexchanger.data.database.entity.RateEntity
 import com.example.currencyexchanger.data.model.ExchangeRates
-import com.example.currencyexchanger.data.model.Rate
 
 class ExchangeRatesRepository(
     private val exchangeRatesEndpoint: ExchangeRatesEndpoint,
@@ -17,9 +15,7 @@ class ExchangeRatesRepository(
 
         return ExchangeRates(
             base = entity.base,
-            rates = entity.rates.map {
-                Rate(it.currency, it.rate)
-            }
+            rates = entity.rates
         )
     }
 
@@ -28,7 +24,7 @@ class ExchangeRatesRepository(
             exchangeRatesEntityDAO.insert(
                 ExchangeRatesEntity(
                     it.base,
-                    it.rates.map { rate -> RateEntity(rate.currency, rate.rate) }
+                    it.rates
                 )
             )
         }

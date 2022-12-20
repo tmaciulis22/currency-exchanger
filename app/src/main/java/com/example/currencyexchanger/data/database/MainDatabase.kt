@@ -15,7 +15,7 @@ import com.example.currencyexchanger.data.database.entity.ExchangeRatesEntity
     ],
     version = 1
 )
-@TypeConverters(ListRateEntityTypeConverter::class)
+@TypeConverters(CustomTypeConverters::class)
 abstract class MainDatabase : RoomDatabase() {
 
     abstract fun balanceEntityDAO(): BalanceEntityDAO

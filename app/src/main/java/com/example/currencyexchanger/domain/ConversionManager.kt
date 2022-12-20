@@ -15,8 +15,8 @@ class ConversionManager @Inject constructor(
         toCurrency: String
     ): ConversionResult {
         val rates = exchangeRatesRepository.getExchangeRates().rates
-        val fromRate = rates.firstOrNull { it.currency == fromCurrency }?.rate ?: 1.0
-        val toRate = rates.firstOrNull { it.currency == toCurrency }?.rate ?: 1.0
+        val fromRate = rates[fromCurrency] ?: 1.0
+        val toRate = rates[toCurrency] ?: 1.0
         val rate = toRate / fromRate
 
         val fee = commissionFeeManager.calculateFee(amount, fromRate)
