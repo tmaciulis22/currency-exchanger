@@ -3,7 +3,7 @@ package com.example.currencyexchanger.domain
 import com.example.currencyexchanger.data.model.Balance
 import com.example.currencyexchanger.data.model.ConversionResult
 import com.example.currencyexchanger.data.repository.BalanceRepository
-import kotlinx.coroutines.flow.singleOrNull
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class BalancesManager @Inject constructor(
@@ -16,7 +16,7 @@ class BalancesManager @Inject constructor(
         fromCurrency: String,
         toCurrency: String
     ): Result<Unit> {
-        val balances = balances.singleOrNull() ?: emptyList()
+        val balances = balances.firstOrNull() ?: emptyList()
         val fromBalance = balances.firstOrNull { it.currency == fromCurrency }
             ?: Balance(amount = 0.0, currency = fromCurrency)
         val toBalance = balances.firstOrNull { it.currency == toCurrency }

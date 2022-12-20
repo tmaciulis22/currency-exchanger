@@ -18,6 +18,7 @@ fun ExchangeScreen(
     exchangeViewModel: ExchangeViewModel = hiltViewModel()
 ) {
     val state = exchangeViewModel.state.collectAsState()
+    val showSuccessDialog = exchangeViewModel.showSuccessDialog.collectAsState()
 
     Column(
         modifier = Modifier.padding(32.dp),
@@ -29,7 +30,8 @@ fun ExchangeScreen(
             onInputChange = {
                 exchangeViewModel.onExchangeInputChange(it)
             },
-            currencies = state.value.rates.keys.toList(),
+            fromCurrencies = state.value.balances.map { it.currency },
+            toCurrencies = state.value.rates.keys.toList(),
             onSelectedCurrency = { type, newCurrency ->
                 exchangeViewModel.onSelectedCurrency(type, newCurrency)
             }
@@ -46,7 +48,7 @@ fun ExchangeScreen(
             text = stringResource(id = R.string.exchange_screen_action_button_text)
         )
         InfoDialog(
-            show = state.value.showSuccessDialog,
+            show = showSuccessDialog.value,
             onClose = { exchangeViewModel.onSuccessDialogClose() },
             title = stringResource(id = R.string.successful_conversion_title),
             description = stringResource(

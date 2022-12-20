@@ -34,11 +34,4 @@ class BalanceRepository(
             )
         }
     )
-
-    suspend fun deleteBalance(balance: Balance) = balanceEntityDAO.delete(
-        BalanceEntity(
-            balance.currency,
-            balance.amount
-        )
-    )
 }

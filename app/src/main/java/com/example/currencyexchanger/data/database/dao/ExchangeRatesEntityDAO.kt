@@ -16,7 +16,4 @@ interface ExchangeRatesEntityDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(exchangeRatesEntities: ExchangeRatesEntity)
-
-    @Delete
-    suspend fun delete(exchangeRatesEntity: ExchangeRatesEntity)
 }

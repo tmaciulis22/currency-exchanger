@@ -11,10 +11,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,9 +28,22 @@ class ExchangeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val conversionResultState = MutableStateFlow<ConversionResult?>(null)
-    private val exchangerInputValues = MutableStateFlow<Map<CurrencyInputType, String>>(mapOf())
-    private val selectedCurrencies = MutableStateFlow<Map<CurrencyInputType, String>>(mapOf())
-    private val showSuccessDialog = MutableStateFlow(false)
+
+    private val exchangerInputValues = MutableStateFlow(
+        mapOf(
+            CurrencyInputType.Sell to "0.00",
+            CurrencyInputType.Receive to "0.00"
+        )
+    )
+    private val selectedCurrencies = MutableStateFlow(
+        mapOf(
+            CurrencyInputType.Sell to "EUR",
+            CurrencyInputType.Receive to "USD"
+        )
+    )
+    private val _showSuccessDialog = MutableStateFlow(false)
+    val showSuccessDialog
+        get() = _showSuccessDialog.asStateFlow()
 
     val state = combine(
         balancesManager.balances,
@@ -35,15 +51,13 @@ class ExchangeViewModel @Inject constructor(
         conversionResultState,
         exchangerInputValues,
         selectedCurrencies,
-//        showSuccessDialog
     ) { balances, exchangeRates, result, inputValues, currencies ->
         ExchangeState(
             balances = balances,
             rates = exchangeRates.rates,
             conversionResult = result,
             exchangerInputValues = inputValues,
-            selectedCurrencies = currencies,
-//            showSuccessDialog = show
+            selectedCurrencies = currencies
         )
     }.stateIn(
         scope = viewModelScope + Dispatchers.IO,
@@ -71,31 +85,38 @@ class ExchangeViewModel @Inject constructor(
 
             if (updateBalancesResult.isSuccess) {
                 conversionManager.updateConversionsCount()
-                showSuccessDialog.value = true
+                withContext(Dispatchers.Main) {
+                    _showSuccessDialog.value = true
+                }
             }
         }
     }
 
-    fun onExchangeInputChange(newValue: String) { // TODO viewModelScope.launch { }?
-        val oldMap = exchangerInputValues.value.toMutableMap()
-        oldMap[CurrencyInputType.Sell] = newValue
-        val fromCurrency = selectedCurrencies.value[CurrencyInputType.Sell] ?: return
-        val toCurrency = selectedCurrencies.value[CurrencyInputType.Receive] ?: return
+    fun onExchangeInputChange(newValue: String) {
+        exchangerInputValues.update { inputs ->
+            val newMap = inputs.toMutableMap()
+            newMap[CurrencyInputType.Sell] = newValue
+            val fromCurrency = selectedCurrencies.value[CurrencyInputType.Sell] ?: return
+            val toCurrency = selectedCurrencies.value[CurrencyInputType.Receive] ?: return
 
-        convert(
-            amount = newValue.toDouble(),
-            fromCurrency = fromCurrency,
-            toCurrency = toCurrency
-        )
+            convert(
+                amount = newValue.toDouble(),
+                fromCurrency = fromCurrency,
+                toCurrency = toCurrency
+            )
 
-        oldMap[CurrencyInputType.Receive] = conversionResultState.value?.to.toString()
-        exchangerInputValues.value = oldMap
+            newMap[CurrencyInputType.Receive] = conversionResultState.value?.to.toString()
+
+            newMap
+        }
     }
 
     fun onSelectedCurrency(type: CurrencyInputType, newCurrency: String) {
-        val oldMap = selectedCurrencies.value.toMutableMap()
-        oldMap[type] = newCurrency
-        selectedCurrencies.value = oldMap
+        selectedCurrencies.update {
+            val newMap = it.toMutableMap()
+            newMap[type] = newCurrency
+            newMap
+        }
 
         exchangerInputValues.value[CurrencyInputType.Sell]?.let {
             onExchangeInputChange(it)
@@ -103,7 +124,7 @@ class ExchangeViewModel @Inject constructor(
     }
 
     fun onSuccessDialogClose() {
-        showSuccessDialog.value = false
+        _showSuccessDialog.value = false
     }
 
     private fun convert(

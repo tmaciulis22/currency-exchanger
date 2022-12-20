@@ -71,7 +71,7 @@ fun CurrencyInput(
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.Transparent,
             ),
-            enabled = type == CurrencyInputType.Receive
+            enabled = type == CurrencyInputType.Sell
         )
         CurrencySelector(
             currencies = currencies,

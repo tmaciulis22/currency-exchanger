@@ -8,9 +8,11 @@ data class ExchangeState(
     val balances: List<Balance> = emptyList(),
     val rates: Map<String, Double> = emptyMap(),
     val conversionResult: ConversionResult? = null,
-    val exchangerInputValues: Map<CurrencyInputType, String> = mapOf(),
-    val selectedCurrencies: Map<CurrencyInputType, String> = mapOf(),
-    val showSuccessDialog: Boolean = false
+    val exchangerInputValues: Map<CurrencyInputType, String> = mapOf(
+        CurrencyInputType.Sell to "0.00",
+        CurrencyInputType.Receive to "0.00"
+    ),
+    val selectedCurrencies: Map<CurrencyInputType, String> = mapOf()
 ) {
 
     val fromAmount
