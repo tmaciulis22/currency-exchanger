@@ -1,6 +1,6 @@
 package com.example.currencyexchanger.data.model
 
 data class ExchangeRate(
-    val base: Currency,
-    val rates: List<Pair<Currency, Double>>
+    val base: String,
+    val rates: List<Pair<String, Double>>
 )

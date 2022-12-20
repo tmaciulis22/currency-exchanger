@@ -19,7 +19,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.currencyexchanger.R
-import com.example.currencyexchanger.data.model.Currency
 
 @Composable
 fun CurrencyInput(
@@ -27,7 +26,7 @@ fun CurrencyInput(
     type: CurrencyInputType,
     inputValue: String,
     onInputChange: (String) -> Unit,
-    onSelectedCurrency: (Currency) -> Unit
+    onSelectedCurrency: (String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -67,7 +66,7 @@ fun CurrencyInput(
             )
         )
         CurrencySelector(
-            currencies = Currency.values().toList(),
+            currencies = listOf("EUR", "USD"), // TODO
             onSelectedCurrency = onSelectedCurrency
         )
     }

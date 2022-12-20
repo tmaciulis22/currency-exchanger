@@ -8,14 +8,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.currencyexchanger.R
-import com.example.currencyexchanger.data.model.Currency
 import com.example.currencyexchanger.ui.theme.Typography
 
 @Composable
 fun CurrencyExchanger(
     inputValues: Map<CurrencyInputType, String>,
     onInputChange: (CurrencyInputType, String) -> Unit,
-    onSelectedCurrency: (CurrencyInputType, Currency) -> Unit
+    onSelectedCurrency: (CurrencyInputType, String) -> Unit
 ) {
     Column {
         Text(

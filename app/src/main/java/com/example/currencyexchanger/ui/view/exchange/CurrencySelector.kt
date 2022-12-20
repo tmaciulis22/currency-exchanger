@@ -10,18 +10,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.example.currencyexchanger.R
-import com.example.currencyexchanger.data.model.Currency
 
 @Composable
 fun CurrencySelector(
-    currencies: List<Currency>,
-    onSelectedCurrency: (Currency) -> Unit,
+    currencies: List<String>,
+    onSelectedCurrency: (String) -> Unit,
 ) {
     var expanded by remember {
         mutableStateOf(false)
     }
     var selectedCurrency by remember {
-        mutableStateOf(currencies.firstOrNull() ?: Currency.EUR)
+        mutableStateOf(currencies.firstOrNull() ?: "EUR")
     }
 
     Box {
@@ -30,7 +29,7 @@ fun CurrencySelector(
             colors = ButtonDefaults.textButtonColors(contentColor = Color.Black)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = selectedCurrency.name)
+                Text(text = selectedCurrency)
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowDown,
                     contentDescription = stringResource(R.string.currency_selector_dropdown_icon_description)
@@ -44,7 +43,7 @@ fun CurrencySelector(
                     selectedCurrency = it
                     expanded = false
                 }) {
-                    Text(text = it.name)
+                    Text(text = it)
                 }
             }
         }
