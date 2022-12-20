@@ -35,7 +35,7 @@ object AppModule { // TODO split it to separate modules
     @Provides
     fun provideSharedPreference(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences(
-            "currency-exchanger-prefs", // TODO move it to environment file
+            Config.SHARED_PREFS,
             Context.MODE_PRIVATE
         )
     }
@@ -55,7 +55,7 @@ object AppModule { // TODO split it to separate modules
         return Room.databaseBuilder(
             appContext,
             MainDatabase::class.java,
-            "exchanger-database"
+            Config.APP_DB
         )
             .addTypeConverter(CustomTypeConverters(moshi))
             .build()
@@ -83,8 +83,8 @@ object AppModule { // TODO split it to separate modules
                 val newRequest = request
                     .newBuilder()
                     .header(
-                        "apikey",
-                        "i1PMfVUbzMxWJlyZ8ONvqnjbdMZnbKYF" // TODO move it to environment file
+                        Config.HEADER_PARAM_API_KEY,
+                        Config.API_KEY
                     )
                     .build()
                 chain.proceed(newRequest)
@@ -99,7 +99,7 @@ object AppModule { // TODO split it to separate modules
     @Provides
     fun provideRetrofit(moshi: Moshi, client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://api.apilayer.com/exchangerates_data/") // TODO move it to environment file
+            .baseUrl(Config.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(client)
             .build()
