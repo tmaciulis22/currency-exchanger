@@ -14,6 +14,7 @@ import com.example.currencyexchanger.ui.theme.Typography
 fun CurrencyExchanger(
     inputValues: Map<CurrencyInputType, String>,
     onInputChange: (CurrencyInputType, String) -> Unit,
+    currencies: List<String>,
     onSelectedCurrency: (CurrencyInputType, String) -> Unit
 ) {
     Column {
@@ -31,7 +32,8 @@ fun CurrencyExchanger(
             },
             onSelectedCurrency = {
                 onSelectedCurrency(CurrencyInputType.Sell, it)
-            }
+            },
+            currencies = currencies
         )
         CurrencyInput(
             modifier = Modifier.padding(bottom = 18.dp),
@@ -42,7 +44,8 @@ fun CurrencyExchanger(
             },
             onSelectedCurrency = {
                 onSelectedCurrency(CurrencyInputType.Receive, it)
-            }
+            },
+            currencies = currencies
         )
     }
 }

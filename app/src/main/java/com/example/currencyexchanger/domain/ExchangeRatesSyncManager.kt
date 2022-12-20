@@ -11,6 +11,8 @@ class ExchangeRatesSyncManager @Inject constructor(
     private val refreshRate: Long = REFRESH_RATE_MILLIS
 ) {
 
+    val exchangeRates = exchangeRatesRepository.getExchangeRates()
+
     suspend fun start() {
         flow {
             while (true) {

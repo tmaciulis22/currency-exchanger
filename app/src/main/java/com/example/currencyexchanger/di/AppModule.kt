@@ -148,13 +148,9 @@ object AppModule { // TODO split it to separate modules
     @Provides
     @Singleton
     fun provideConversionManager(
-        commissionFeeManager: CommissionFeeManager,
-        exchangeRatesRepository: ExchangeRatesRepository
+        commissionFeeManager: CommissionFeeManager
     ): ConversionManager {
-        return ConversionManager(
-            commissionFeeManager,
-            exchangeRatesRepository
-        )
+        return ConversionManager(commissionFeeManager)
     }
 
     @Provides

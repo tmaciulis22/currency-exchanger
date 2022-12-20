@@ -1,24 +1,18 @@
 package com.example.currencyexchanger.domain
 
 import com.example.currencyexchanger.data.model.ConversionResult
-import com.example.currencyexchanger.data.repository.ExchangeRatesRepository
 import javax.inject.Inject
 
 class ConversionManager @Inject constructor(
-    private val commissionFeeManager: CommissionFeeManager,
-    private val exchangeRatesRepository: ExchangeRatesRepository,
+    private val commissionFeeManager: CommissionFeeManager
 ) {
 
-    suspend fun convert(
+    fun convert(
         amount: Double,
-        fromCurrency: String,
-        toCurrency: String
+        fromRate: Double,
+        toRate: Double
     ): ConversionResult {
-        val rates = exchangeRatesRepository.getExchangeRates().rates
-        val fromRate = rates[fromCurrency] ?: 1.0
-        val toRate = rates[toCurrency] ?: 1.0
-        val rate = toRate / fromRate
-
+        val rate = toRate / fromRate // Since every rate is based on EUR, we can just divide toRate with fromRate
         val fee = commissionFeeManager.calculateFee(amount, fromRate)
         val convertedAmount = (amount - fee) * rate
 

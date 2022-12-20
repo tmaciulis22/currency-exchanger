@@ -5,5 +5,6 @@ import com.example.currencyexchanger.data.model.ConversionResult
 
 data class ExchangeState(
     val balances: List<Balance> = emptyList(),
-    val conversionResult: ConversionResult? = null
+    val rates: Map<String, Double> = emptyMap(),
+    val conversionResult: ConversionResult? = null,
 )

@@ -21,6 +21,7 @@ class BalanceRepository(
                         )
                     }
                 } else {
+                    balanceEntityDAO.insertAll(listOf(BalanceEntity()))
                     listOf(Balance())
                 }
             }

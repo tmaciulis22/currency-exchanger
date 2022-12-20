@@ -27,9 +27,14 @@ class ExchangeViewModel @Inject constructor(
 
     val state = combine(
         balancesManager.balances,
+        exchangeRatesSyncManager.exchangeRates,
         conversionResultState
-    ) { balances, result ->
-        ExchangeState(balances, result)
+    ) { balances, exchangeRates, result ->
+        ExchangeState(
+            balances,
+            exchangeRates.rates,
+            result
+        )
     }.stateIn(
         scope = viewModelScope + Dispatchers.IO,
         started = SharingStarted.WhileSubscribed(5000),
@@ -50,8 +55,8 @@ class ExchangeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val conversionResult = conversionManager.convert(
                 amount,
-                fromCurrency,
-                toCurrency
+                state.value.rates[fromCurrency] ?: 1.0,
+                state.value.rates[toCurrency] ?: 1.0
             )
             val updateBalancesResult = balancesManager.updateBalances(
                 conversionResult,

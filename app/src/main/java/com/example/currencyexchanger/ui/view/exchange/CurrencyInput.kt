@@ -26,6 +26,7 @@ fun CurrencyInput(
     type: CurrencyInputType,
     inputValue: String,
     onInputChange: (String) -> Unit,
+    currencies: List<String>,
     onSelectedCurrency: (String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -63,10 +64,11 @@ fun CurrencyInput(
             maxLines = 1,
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.Transparent,
-            )
+            ),
+            enabled = type == CurrencyInputType.Receive
         )
         CurrencySelector(
-            currencies = listOf("EUR", "USD"), // TODO
+            currencies = currencies,
             onSelectedCurrency = onSelectedCurrency
         )
     }

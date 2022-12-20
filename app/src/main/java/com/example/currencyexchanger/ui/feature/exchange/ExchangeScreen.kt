@@ -28,6 +28,7 @@ fun ExchangeScreen(
             {_, _ ->
 
             },
+            state.value.rates.keys.toList(),
             {_, _ ->
 
             }
