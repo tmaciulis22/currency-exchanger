@@ -17,25 +17,25 @@ import com.example.currencyexchanger.ui.view.exchange.CurrencyExchanger
 fun ExchangeScreen(
     exchangeViewModel: ExchangeViewModel = hiltViewModel()
 ) {
-    val state = exchangeViewModel.state.collectAsState()
-    val showSuccessDialog = exchangeViewModel.showSuccessDialog.collectAsState()
+    val dataState = exchangeViewModel.dataState.collectAsState()
+    val uiState = exchangeViewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier.padding(32.dp),
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        BalancesOverview(balances = state.value.balances)
+        BalancesOverview(balances = dataState.value.balances)
         CurrencyExchanger(
-            inputValues = state.value.exchangerInputValues,
+            inputValues = uiState.value.exchangerInputValues,
             onInputChange = {
                 exchangeViewModel.onExchangeInputChange(it)
             },
-            fromCurrencies = state.value.balances.map { it.currency },
-            toCurrencies = state.value.rates.keys.toList(),
+            fromCurrencies = dataState.value.balances.map { it.currency },
+            toCurrencies = dataState.value.rates.keys.toList(),
             onSelectedCurrency = { type, newCurrency ->
                 exchangeViewModel.onSelectedCurrency(type, newCurrency)
             },
-            selectedCurrencies = state.value.selectedCurrencies
+            selectedCurrencies = uiState.value.selectedCurrencies
         )
         Spacer(modifier = Modifier.weight(1f))
         RoundedButton(
@@ -44,22 +44,22 @@ fun ExchangeScreen(
                 .height(80.dp)
                 .padding(12.dp),
             onClick = {
-                exchangeViewModel.submitConversion()
+                exchangeViewModel.onSubmit()
             },
             text = stringResource(id = R.string.exchange_screen_action_button_text)
         )
         InfoDialog(
-            show = showSuccessDialog.value,
+            show = uiState.value.showSuccessDialog,
             onClose = { exchangeViewModel.onSuccessDialogClose() },
             title = stringResource(id = R.string.successful_conversion_title),
             description = stringResource(
                 id = R.string.successful_conversion_description,
-                state.value.fromAmount.toString(),
-                state.value.fromCurrency.toString(),
-                state.value.toAmount.toString(),
-                state.value.toCurrency.toString(),
-                state.value.commissionFee.toString(),
-                state.value.fromCurrency.toString()
+                dataState.value.fromAmount.toString(),
+                uiState.value.fromCurrency.toString(),
+                dataState.value.toAmount.toString(),
+                uiState.value.toCurrency.toString(),
+                dataState.value.commissionFee.toString(),
+                uiState.value.fromCurrency.toString()
             )
         )
     }

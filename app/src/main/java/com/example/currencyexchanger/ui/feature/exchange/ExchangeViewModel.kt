@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,54 +27,48 @@ class ExchangeViewModel @Inject constructor(
     private val balancesManager: BalancesManager
 ) : ViewModel() {
 
+    private val _uiState = MutableStateFlow(ExchangeUIState())
+    val uiState = _uiState.asStateFlow()
+
     private val conversionResultState = MutableStateFlow<ConversionResult?>(null)
 
-    private val exchangerInputValues = MutableStateFlow(
-        mapOf(
-            CurrencyInputType.Sell to "0.00",
-            CurrencyInputType.Receive to "0.00"
-        )
-    )
-    private val selectedCurrencies = MutableStateFlow<Map<CurrencyInputType, String>>(mapOf())
-    private val _showSuccessDialog = MutableStateFlow(false)
-    val showSuccessDialog
-        get() = _showSuccessDialog.asStateFlow()
-
-    val state = combine(
+    val dataState = combine(
         balancesManager.balances,
         exchangeRatesSyncManager.exchangeRates,
         conversionResultState,
-        exchangerInputValues,
-        selectedCurrencies,
-    ) { balances, exchangeRates, result, inputValues, currencies ->
-        ExchangeState(
+    ) { balances, exchangeRates, result ->
+        if (_uiState.value.selectedCurrencies.isEmpty()) {
+            _uiState.update {
+                it.copy(
+                    selectedCurrencies = mapOf(
+                        CurrencyInputType.Sell to (balances.firstOrNull()?.currency ?: "EUR"),
+                        CurrencyInputType.Receive to (exchangeRates.rates.keys.firstOrNull() ?: "USD")
+                    )
+                )
+            }
+        }
+        ExchangeDataState(
             balances = balances,
             rates = exchangeRates.rates,
             conversionResult = result,
-            exchangerInputValues = inputValues,
-            selectedCurrencies = currencies
         )
     }.stateIn(
         scope = viewModelScope + Dispatchers.IO,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = ExchangeState()
+        initialValue = ExchangeDataState()
     )
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             exchangeRatesSyncManager.start()
         }
-        selectedCurrencies.value = mapOf(
-            CurrencyInputType.Sell to (state.value.balances.firstOrNull()?.currency ?: "EUR"),
-            CurrencyInputType.Receive to (state.value.rates.keys.firstOrNull() ?: "USD")
-        )
     }
 
-    fun submitConversion() {
+    fun onSubmit() {
         viewModelScope.launch(Dispatchers.IO) {
-            val conversionResult = conversionResultState.value ?: return@launch
-            val fromCurrency = selectedCurrencies.value[CurrencyInputType.Sell] ?: return@launch
-            val toCurrency = selectedCurrencies.value[CurrencyInputType.Receive] ?: return@launch
+            val conversionResult = dataState.value.conversionResult ?: return@launch
+            val fromCurrency = _uiState.value.fromCurrency ?: return@launch
+            val toCurrency = _uiState.value.toCurrency ?: return@launch
 
             val updateBalancesResult = balancesManager.updateBalances(
                 conversionResult,
@@ -86,18 +79,20 @@ class ExchangeViewModel @Inject constructor(
             if (updateBalancesResult.isSuccess) {
                 conversionManager.updateConversionsCount()
                 withContext(Dispatchers.Main) {
-                    _showSuccessDialog.value = true
+                    _uiState.update {
+                        it.copy(showSuccessDialog = true)
+                    }
                 }
             }
         }
     }
 
     fun onExchangeInputChange(newValue: String) {
-        exchangerInputValues.update { inputs ->
-            val newMap = inputs.toMutableMap()
+        _uiState.update {
+            val newMap = it.exchangerInputValues.toMutableMap()
             newMap[CurrencyInputType.Sell] = newValue
-            val fromCurrency = selectedCurrencies.value[CurrencyInputType.Sell] ?: return
-            val toCurrency = selectedCurrencies.value[CurrencyInputType.Receive] ?: return
+            val fromCurrency = it.fromCurrency ?: return
+            val toCurrency = it.toCurrency ?: return
 
             convert(
                 amount = newValue.toDouble(),
@@ -107,18 +102,18 @@ class ExchangeViewModel @Inject constructor(
 
             newMap[CurrencyInputType.Receive] = conversionResultState.value?.to.toString()
 
-            newMap
+            it.copy(exchangerInputValues = newMap)
         }
     }
 
     fun onSelectedCurrency(type: CurrencyInputType, newCurrency: String) {
-        selectedCurrencies.update {
-            val newMap = it.toMutableMap()
+        _uiState.update {
+            val newMap = it.selectedCurrencies.toMutableMap()
             newMap[type] = newCurrency
-            newMap
+            it.copy(selectedCurrencies = newMap)
         }
 
-        exchangerInputValues.value[CurrencyInputType.Sell]?.let {
+        _uiState.value.exchangerInputValues[CurrencyInputType.Sell]?.let {
             if (it.toDouble() > 0.0) {
                 onExchangeInputChange(it)
             }
@@ -126,7 +121,9 @@ class ExchangeViewModel @Inject constructor(
     }
 
     fun onSuccessDialogClose() {
-        _showSuccessDialog.value = false
+        _uiState.update {
+            it.copy(showSuccessDialog = false)
+        }
     }
 
     private fun convert(
@@ -136,8 +133,8 @@ class ExchangeViewModel @Inject constructor(
     ) {
         val conversionResult = conversionManager.convert(
             amount,
-            state.value.rates[fromCurrency] ?: 1.0,
-            state.value.rates[toCurrency] ?: 1.0
+            dataState.value.rates[fromCurrency] ?: 1.0,
+            dataState.value.rates[toCurrency] ?: 1.0
         )
 
         conversionResultState.value = conversionResult
