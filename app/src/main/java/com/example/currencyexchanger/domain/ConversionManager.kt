@@ -1,6 +1,7 @@
 package com.example.currencyexchanger.domain
 
 import com.example.currencyexchanger.data.model.ConversionResult
+import com.example.currencyexchanger.util.round
 import javax.inject.Inject
 
 class ConversionManager @Inject constructor(
@@ -13,8 +14,8 @@ class ConversionManager @Inject constructor(
         toRate: Double
     ): ConversionResult {
         val rate = toRate / fromRate // Since every rate is based on EUR, we can just divide toRate with fromRate
-        val fee = commissionFeeManager.calculateFee(amount, fromRate)
-        val convertedAmount = (amount - fee) * rate
+        val fee = commissionFeeManager.calculateFee(amount, fromRate).round()
+        val convertedAmount = ((amount - fee) * rate).round()
 
         return ConversionResult(
             from = amount,

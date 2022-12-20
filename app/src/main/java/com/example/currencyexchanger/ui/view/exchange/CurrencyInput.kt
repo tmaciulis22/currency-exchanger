@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.currencyexchanger.R
+import com.example.currencyexchanger.util.round
 
 @Composable
 fun CurrencyInput(
@@ -41,7 +42,7 @@ fun CurrencyInput(
             onValueChange = {
                 it.toDoubleOrNull()?.let { inputAsDouble ->
                     if (inputAsDouble > 0.00) {
-                        onInputChange(it)
+                        onInputChange(inputAsDouble.round().toString())
                     }
                 }
             },

@@ -6,6 +6,8 @@ import com.example.currencyexchanger.data.database.entity.ExchangeRatesEntity
 import com.example.currencyexchanger.data.model.ExchangeRates
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 
 class ExchangeRatesRepository(
     private val exchangeRatesEndpoint: ExchangeRatesEndpoint,
@@ -13,11 +15,13 @@ class ExchangeRatesRepository(
 ) {
 
     fun getExchangeRates(): Flow<ExchangeRates> =
-        exchangeRatesEntityDAO.getAsFlow().map { entity ->
-            ExchangeRates(
-                base = entity.base,
-                rates = entity.rates
-            )
+        exchangeRatesEntityDAO.get().mapNotNull { entity ->
+            entity?.let {
+                ExchangeRates(
+                    base = it.base,
+                    rates = it.rates
+                )
+            }
         }
 
     suspend fun updateExchangeRates(base: String? = null, symbols: List<String>? = null) {

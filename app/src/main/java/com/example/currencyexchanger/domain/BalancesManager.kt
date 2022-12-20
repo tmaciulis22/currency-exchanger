@@ -3,6 +3,7 @@ package com.example.currencyexchanger.domain
 import com.example.currencyexchanger.data.model.Balance
 import com.example.currencyexchanger.data.model.ConversionResult
 import com.example.currencyexchanger.data.repository.BalanceRepository
+import com.example.currencyexchanger.util.round
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
@@ -27,11 +28,11 @@ class BalancesManager @Inject constructor(
         }
 
         val newFromBalance = Balance(
-            amount = fromBalance.amount - conversionResult.amountWithFee,
+            amount = (fromBalance.amount - conversionResult.amountWithFee).round(),
             currency = fromBalance.currency
         )
         val newToBalance = Balance(
-            amount = toBalance.amount + conversionResult.to,
+            amount = (toBalance.amount + conversionResult.to).round(),
             currency = toBalance.currency
         )
 
