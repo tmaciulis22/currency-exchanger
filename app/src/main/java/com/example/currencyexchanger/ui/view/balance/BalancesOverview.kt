@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.example.currencyexchanger.R
 import com.example.currencyexchanger.data.model.Balance
 import com.example.currencyexchanger.ui.theme.Typography
+import com.example.currencyexchanger.util.shimmerPlaceholder
 
 @Composable
 fun BalancesOverview(balances: List<Balance>) {
@@ -25,8 +26,17 @@ fun BalancesOverview(balances: List<Balance>) {
             modifier = Modifier.padding(top = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(items = balances, key = { it.currency }) {
-                Text(text = "${it.amount} ${it.currency}")
+            if (balances.isNotEmpty()) {
+                items(items = balances, key = { it.currency }) {
+                    Text(text = "${it.amount} ${it.currency}")
+                }
+            } else {
+                items(3) {
+                    Text(
+                        modifier = Modifier.shimmerPlaceholder(),
+                        text = "1000 USD"
+                    )
+                }
             }
         }
     }

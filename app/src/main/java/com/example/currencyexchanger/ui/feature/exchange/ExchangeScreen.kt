@@ -46,7 +46,7 @@ fun ExchangeScreen(
             onClick = {
                 exchangeViewModel.onSubmit()
             },
-            text = stringResource(id = R.string.exchange_screen_action_button_text)
+            text = stringResource(id = R.string.exchange_screen_action_button_text),
         )
         InfoDialog(
             show = uiState.value.showSuccessDialog,
