@@ -29,13 +29,22 @@ class CommissionFeeManager @Inject constructor(
             else -> amount * percentageAfterThreshold + eurEquivalent * exchangeRateEur
         }
 
+        return commissionFee
+    }
+
+    fun updateConversionsCount() {
+        val totalConversions = sharedPreferences.getLong(TOTAL_CONVERSIONS, 0)
+        val lastConversion = sharedPreferences.getLong(LAST_CONVERSION, System.currentTimeMillis())
+        val conversionsToday = if (System.currentTimeMillis() - lastConversion >= DAY_IN_MILLIS)
+            0
+        else
+            sharedPreferences.getLong(CONVERSIONS_TODAY, 0)
+
         sharedPreferences.apply {
             edit().putLong(TOTAL_CONVERSIONS, totalConversions + 1).apply()
             edit().putLong(LAST_CONVERSION, System.currentTimeMillis()).apply()
             edit().putLong(CONVERSIONS_TODAY, conversionsToday + 1).apply()
         }
-
-        return commissionFee
     }
 
     companion object {

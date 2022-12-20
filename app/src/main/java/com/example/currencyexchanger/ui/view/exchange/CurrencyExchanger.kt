@@ -13,7 +13,7 @@ import com.example.currencyexchanger.ui.theme.Typography
 @Composable
 fun CurrencyExchanger(
     inputValues: Map<CurrencyInputType, String>,
-    onInputChange: (CurrencyInputType, String) -> Unit,
+    onInputChange: (String) -> Unit,
     currencies: List<String>,
     onSelectedCurrency: (CurrencyInputType, String) -> Unit
 ) {
@@ -27,9 +27,7 @@ fun CurrencyExchanger(
             modifier = Modifier.padding(bottom = 18.dp),
             type = CurrencyInputType.Sell,
             inputValue = inputValues[CurrencyInputType.Sell] ?: "0.00",
-            onInputChange = {
-                onInputChange(CurrencyInputType.Sell, it)
-            },
+            onInputChange = onInputChange,
             onSelectedCurrency = {
                 onSelectedCurrency(CurrencyInputType.Sell, it)
             },
@@ -39,9 +37,6 @@ fun CurrencyExchanger(
             modifier = Modifier.padding(bottom = 18.dp),
             type = CurrencyInputType.Receive,
             inputValue = inputValues[CurrencyInputType.Receive] ?: "0.00",
-            onInputChange = {
-                onInputChange(CurrencyInputType.Receive, it)
-            },
             onSelectedCurrency = {
                 onSelectedCurrency(CurrencyInputType.Receive, it)
             },

@@ -22,4 +22,6 @@ class ConversionManager @Inject constructor(
             fee = fee
         )
     }
+
+    fun updateConversionsCount() = commissionFeeManager.updateConversionsCount()
 }

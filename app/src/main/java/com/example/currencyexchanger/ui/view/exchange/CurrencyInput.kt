@@ -25,7 +25,7 @@ fun CurrencyInput(
     modifier: Modifier = Modifier,
     type: CurrencyInputType,
     inputValue: String,
-    onInputChange: (String) -> Unit,
+    onInputChange: (String) -> Unit = {},
     currencies: List<String>,
     onSelectedCurrency: (String) -> Unit
 ) {
@@ -38,7 +38,13 @@ fun CurrencyInput(
     ) {
         TextField(
             value = inputValue,
-            onValueChange = onInputChange,
+            onValueChange = {
+                it.toDoubleOrNull()?.let { inputAsDouble ->
+                    if (inputAsDouble > 0.00) {
+                        onInputChange(it)
+                    }
+                }
+            },
             leadingIcon = {
                 Icon(
                     modifier = Modifier.size(48.dp),

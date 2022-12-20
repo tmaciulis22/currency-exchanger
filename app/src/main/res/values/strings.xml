@@ -8,4 +8,7 @@
     <string name="currency_input_sell_icon_description">Arrow upwards</string>
     <string name="currency_input_receive_icon_description">Arrow downwards</string>
     <string name="currency_selector_dropdown_icon_description">Arrow downwards</string>
+
+    <string name="successful_conversion_title">Currency converted</string>
+    <string name="successful_conversion_description">You have converted %1$s %2$s to %3$s %4$s with commission fee %5$s %6$s</string>
 </resources>

@@ -22,12 +22,12 @@ class BalancesManager @Inject constructor(
         val toBalance = balances.firstOrNull { it.currency == toCurrency }
             ?: Balance(amount = 0.0, currency = toCurrency)
 
-        if (fromBalance.amount - conversionResult.totalFromAmount < 0) {
+        if (fromBalance.amount - conversionResult.amountWithFee < 0) {
             return Result.failure(Error("Not enough money in balance"))
         }
 
         val newFromBalance = Balance(
-            amount = fromBalance.amount - conversionResult.totalFromAmount,
+            amount = fromBalance.amount - conversionResult.amountWithFee,
             currency = fromBalance.currency
         )
         val newToBalance = Balance(

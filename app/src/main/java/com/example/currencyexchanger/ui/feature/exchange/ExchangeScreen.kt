@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.currencyexchanger.R
 import com.example.currencyexchanger.ui.view.balance.BalancesOverview
+import com.example.currencyexchanger.ui.view.core.InfoDialog
 import com.example.currencyexchanger.ui.view.core.RoundedButton
 import com.example.currencyexchanger.ui.view.exchange.CurrencyExchanger
 
@@ -24,13 +25,13 @@ fun ExchangeScreen(
     ) {
         BalancesOverview(balances = state.value.balances)
         CurrencyExchanger(
-            mapOf(),
-            {_, _ ->
-
+            inputValues = state.value.exchangerInputValues,
+            onInputChange = {
+                exchangeViewModel.onExchangeInputChange(it)
             },
-            state.value.rates.keys.toList(),
-            {_, _ ->
-
+            currencies = state.value.rates.keys.toList(),
+            onSelectedCurrency = { type, newCurrency ->
+                exchangeViewModel.onSelectedCurrency(type, newCurrency)
             }
         )
         Spacer(modifier = Modifier.weight(1f))
@@ -40,9 +41,23 @@ fun ExchangeScreen(
                 .height(80.dp)
                 .padding(12.dp),
             onClick = {
-                /*TODO*/
+                exchangeViewModel.submitConversion()
             },
             text = stringResource(id = R.string.exchange_screen_action_button_text)
+        )
+        InfoDialog(
+            show = state.value.showSuccessDialog,
+            onClose = { exchangeViewModel.onSuccessDialogClose() },
+            title = stringResource(id = R.string.successful_conversion_title),
+            description = stringResource(
+                id = R.string.successful_conversion_description,
+                state.value.fromAmount.toString(),
+                state.value.fromCurrency.toString(),
+                state.value.toAmount.toString(),
+                state.value.toCurrency.toString(),
+                state.value.commissionFee.toString(),
+                state.value.fromCurrency.toString()
+            )
         )
     }
 }

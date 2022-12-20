@@ -5,6 +5,6 @@ data class ConversionResult(
     val to: Double,
     val fee: Double
 ) {
-    val totalFromAmount: Double
+    val amountWithFee: Double
         get() = from + fee
 }
