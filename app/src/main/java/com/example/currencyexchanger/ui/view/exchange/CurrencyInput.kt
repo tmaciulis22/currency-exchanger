@@ -28,6 +28,7 @@ fun CurrencyInput(
     inputValue: String,
     onInputChange: (String) -> Unit = {},
     currencies: List<String>,
+    selectedCurrency: String,
     onSelectedCurrency: (String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -76,7 +77,8 @@ fun CurrencyInput(
         )
         CurrencySelector(
             currencies = currencies,
-            onSelectedCurrency = onSelectedCurrency
+            onSelectedCurrency = onSelectedCurrency,
+            selectedCurrency = selectedCurrency
         )
     }
 }

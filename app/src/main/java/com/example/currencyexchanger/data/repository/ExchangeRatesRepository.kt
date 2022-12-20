@@ -5,9 +5,7 @@ import com.example.currencyexchanger.data.database.dao.ExchangeRatesEntityDAO
 import com.example.currencyexchanger.data.database.entity.ExchangeRatesEntity
 import com.example.currencyexchanger.data.model.ExchangeRates
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.onEach
 
 class ExchangeRatesRepository(
     private val exchangeRatesEndpoint: ExchangeRatesEndpoint,

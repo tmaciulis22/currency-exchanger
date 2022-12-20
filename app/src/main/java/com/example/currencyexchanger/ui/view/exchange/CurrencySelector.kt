@@ -14,13 +14,11 @@ import com.example.currencyexchanger.R
 @Composable
 fun CurrencySelector(
     currencies: List<String>,
+    selectedCurrency: String,
     onSelectedCurrency: (String) -> Unit,
 ) {
     var expanded by remember {
         mutableStateOf(false)
-    }
-    var selectedCurrency by remember {
-        mutableStateOf(currencies.firstOrNull() ?: "EUR")
     }
 
     Box {
@@ -40,7 +38,6 @@ fun CurrencySelector(
             currencies.forEach {
                 DropdownMenuItem(onClick = {
                     onSelectedCurrency(it)
-                    selectedCurrency = it
                     expanded = false
                 }) {
                     Text(text = it)

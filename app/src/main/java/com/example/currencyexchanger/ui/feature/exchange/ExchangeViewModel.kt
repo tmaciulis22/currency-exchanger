@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -35,12 +36,7 @@ class ExchangeViewModel @Inject constructor(
             CurrencyInputType.Receive to "0.00"
         )
     )
-    private val selectedCurrencies = MutableStateFlow(
-        mapOf(
-            CurrencyInputType.Sell to "EUR",
-            CurrencyInputType.Receive to "USD"
-        )
-    )
+    private val selectedCurrencies = MutableStateFlow<Map<CurrencyInputType, String>>(mapOf())
     private val _showSuccessDialog = MutableStateFlow(false)
     val showSuccessDialog
         get() = _showSuccessDialog.asStateFlow()
@@ -69,6 +65,10 @@ class ExchangeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             exchangeRatesSyncManager.start()
         }
+        selectedCurrencies.value = mapOf(
+            CurrencyInputType.Sell to (state.value.balances.firstOrNull()?.currency ?: "EUR"),
+            CurrencyInputType.Receive to (state.value.rates.keys.firstOrNull() ?: "USD")
+        )
     }
 
     fun submitConversion() {
@@ -119,7 +119,9 @@ class ExchangeViewModel @Inject constructor(
         }
 
         exchangerInputValues.value[CurrencyInputType.Sell]?.let {
-            onExchangeInputChange(it)
+            if (it.toDouble() > 0.0) {
+                onExchangeInputChange(it)
+            }
         }
     }
 

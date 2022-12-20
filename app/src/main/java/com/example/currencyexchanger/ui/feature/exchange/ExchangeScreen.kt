@@ -34,7 +34,8 @@ fun ExchangeScreen(
             toCurrencies = state.value.rates.keys.toList(),
             onSelectedCurrency = { type, newCurrency ->
                 exchangeViewModel.onSelectedCurrency(type, newCurrency)
-            }
+            },
+            selectedCurrencies = state.value.selectedCurrencies
         )
         Spacer(modifier = Modifier.weight(1f))
         RoundedButton(
