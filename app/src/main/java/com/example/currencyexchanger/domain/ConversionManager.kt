@@ -1,5 +1,6 @@
 package com.example.currencyexchanger.domain
 
+import com.example.currencyexchanger.data.model.ConversionResult
 import com.example.currencyexchanger.data.repository.ExchangeRatesRepository
 import javax.inject.Inject
 
@@ -12,12 +13,19 @@ class ConversionManager @Inject constructor(
         amount: Double,
         fromCurrency: String,
         toCurrency: String
-    ) {
-        val rate = exchangeRatesRepository
-            .getExchangeRate(fromCurrency)
-            .rates
-            .filter { it.first == toCurrency }
+    ): ConversionResult {
+        val rates = exchangeRatesRepository.getExchangeRates().rates
+        val fromRate = rates.firstOrNull { it.first == fromCurrency }?.second ?: 1.0
+        val toRate = rates.firstOrNull { it.first == toCurrency }?.second ?: 1.0
+        val rate = toRate / fromRate
 
-        commissionFeeManager.calculateFee()
+        val fee = commissionFeeManager.calculateFee(amount, fromRate)
+        val convertedAmount = (amount - fee) * rate
+
+        return ConversionResult(
+            from = amount,
+            to = convertedAmount,
+            fee = fee
+        )
     }
 }

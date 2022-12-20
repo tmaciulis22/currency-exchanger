@@ -1,6 +1,6 @@
 package com.example.currencyexchanger.data.api.entity
 
-data class ExchangeRateEntity(
+data class ExchangeRatesEntity(
     val success: Boolean,
     val timestamp: Long,
     val base: String,

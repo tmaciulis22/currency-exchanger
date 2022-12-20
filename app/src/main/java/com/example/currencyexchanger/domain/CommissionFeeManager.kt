@@ -14,7 +14,7 @@ class CommissionFeeManager @Inject constructor(
 
     fun calculateFee(
         amount: Double,
-        exchangeRateEur: Double = 1.0
+        exchangeRateEur: Double
     ): Double {
         val totalConversions = sharedPreferences.getLong(TOTAL_CONVERSIONS, 0)
         val lastConversion = sharedPreferences.getLong(LAST_CONVERSION, System.currentTimeMillis())
