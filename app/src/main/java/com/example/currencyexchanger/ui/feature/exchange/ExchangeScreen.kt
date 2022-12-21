@@ -62,5 +62,11 @@ fun ExchangeScreen(
                 uiState.value.fromCurrency.toString()
             )
         )
+        InfoDialog(
+            show = uiState.value.errorMessage != null,
+            onClose = { exchangeViewModel.onErrorDialogClose() },
+            title = stringResource(id = R.string.error_dialog_title),
+            description = uiState.value.errorMessage ?: stringResource(id = R.string.error_dialog_description)
+        )
     }
 }

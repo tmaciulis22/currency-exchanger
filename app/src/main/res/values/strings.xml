@@ -12,4 +12,7 @@
 
     <string name="successful_conversion_title">Currency converted</string>
     <string name="successful_conversion_description">You have converted %1$s %2$s to %3$s %4$s with commission fee %5$s %6$s</string>
+
+    <string name="error_dialog_title">Operation failed</string>
+    <string name="error_dialog_description">Something wrong happened</string>
 </resources>

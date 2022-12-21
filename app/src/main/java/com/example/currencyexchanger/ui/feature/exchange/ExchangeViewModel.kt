@@ -59,11 +59,26 @@ class ExchangeViewModel @Inject constructor(
 
     fun onSubmit() {
         viewModelScope.launch(Dispatchers.IO) {
-            val fromAmount = _uiState.value.sellAmount?.toDoubleOrNull() ?: return@launch
-            val fromCurrency = _uiState.value.fromCurrency ?: return@launch
-            val toCurrency = _uiState.value.toCurrency ?: return@launch
+            val fromAmount = _uiState.value.sellAmount?.toDoubleOrNull() ?: run {
+                showErrorMessage("Failed to get sell amount")
+                return@launch
+            }
+            val fromCurrency = _uiState.value.fromCurrency ?: run {
+                showErrorMessage("Failed to get sell currency")
+                return@launch
+            }
+            val toCurrency = _uiState.value.toCurrency ?: run {
+                showErrorMessage("Failed to get receiving currency")
+                return@launch
+            }
 
-            if (fromCurrency == toCurrency || fromAmount <= 0.0) return@launch
+            if (fromCurrency == toCurrency) {
+                showErrorMessage("Cannot convert same currency")
+                return@launch
+            } else if (fromAmount <= 0.0) {
+                showErrorMessage("Enter a positive number")
+                return@launch
+            }
 
             val conversionResult = conversionManager.convert(
                 fromAmount,
@@ -80,6 +95,10 @@ class ExchangeViewModel @Inject constructor(
                 conversionManager.updateConversionsCount()
                 _uiState.update {
                     it.copy(showSuccessDialog = true)
+                }
+            } else {
+                updateBalancesResult.exceptionOrNull()?.message?.let {
+                    showErrorMessage(it)
                 }
             }
         }
@@ -122,6 +141,12 @@ class ExchangeViewModel @Inject constructor(
         }
     }
 
+    fun onErrorDialogClose() {
+        _uiState.update {
+            it.copy(errorMessage = null)
+        }
+    }
+
     private fun initSelectedCurrencies(balances: List<Balance>, exchangeRates: ExchangeRates) {
         _uiState.update {
             it.copy(
@@ -139,5 +164,9 @@ class ExchangeViewModel @Inject constructor(
             newMap[CurrencyInputType.Receive] = conversionResult.to.toString()
             it.copy(exchangerInputValues = newMap)
         }
+    }
+
+    private fun showErrorMessage(message: String) {
+        _uiState.update { it.copy(errorMessage = message) }
     }
 }

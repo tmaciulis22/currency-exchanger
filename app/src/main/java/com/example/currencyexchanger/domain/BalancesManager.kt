@@ -17,9 +17,9 @@ class BalancesManager @Inject constructor(
         fromCurrency: String,
         toCurrency: String
     ): Result<Unit> {
-        val balances = balances.firstOrNull() ?: return Result.failure(Error("Could not find balances"))
+        val balances = balances.firstOrNull() ?: return Result.failure(Error("Could not fetch balances"))
         val fromBalance = balances.firstOrNull { it.currency == fromCurrency }
-            ?: return Result.failure(Error("Could not find from balance"))
+            ?: return Result.failure(Error("Could not find selling currency balance"))
         val toBalance = balances.firstOrNull { it.currency == toCurrency }
             ?: Balance(amount = 0.0, currency = toCurrency)
 

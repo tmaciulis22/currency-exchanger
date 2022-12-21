@@ -8,7 +8,8 @@ data class ExchangeUIState(
         CurrencyInputType.Receive to "0.00"
     ),
     val selectedCurrencies: Map<CurrencyInputType, String> = mapOf(),
-    val showSuccessDialog: Boolean = false
+    val showSuccessDialog: Boolean = false,
+    val errorMessage: String? = null
 ) {
 
     val sellAmount
