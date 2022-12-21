@@ -48,16 +48,16 @@ class CommissionFeeManager @Inject constructor(
     }
 
     companion object {
-        private const val NUM_OF_FREE_CONVERSIONS = 5
-        private const val PERCENTAGE = 0.007
-        private const val CONVERSIONS_PER_DAY_THRESHOLD = 15
-        private const val PERCENTAGE_AFTER_THRESHOLD = 0.012
-        private const val EUR_EQUIVALENT = 0.3
+        const val NUM_OF_FREE_CONVERSIONS = 5
+        const val PERCENTAGE = 0.007
+        const val CONVERSIONS_PER_DAY_THRESHOLD = 15
+        const val PERCENTAGE_AFTER_THRESHOLD = 0.012
+        const val EUR_EQUIVALENT = 0.3
 
-        private const val TOTAL_CONVERSIONS = "TOTAL_CONVERSIONS"
-        private const val CONVERSIONS_TODAY = "CONVERSIONS_TODAY"
-        private const val LAST_CONVERSION = "LAST_CONVERSION"
+        const val TOTAL_CONVERSIONS = "TOTAL_CONVERSIONS"
+        const val CONVERSIONS_TODAY = "CONVERSIONS_TODAY"
+        const val LAST_CONVERSION = "LAST_CONVERSION"
 
-        private const val DAY_IN_MILLIS = 86400000L
+        const val DAY_IN_MILLIS = 86400000L
     }
 }
