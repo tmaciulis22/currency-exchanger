@@ -1,6 +1,6 @@
 # Currency Exchanger
  
-### Architecture
+## Architecture
 
 App is divided into three architectural layers: UI, Domain and Data
 
@@ -20,7 +20,7 @@ Data layer consists of:
 
 Communication between layers is mostly implemented using `Kotlin Flow`. In UI layer required flows from other layers are combined into single `StateFlow` for consumption by UI elements.
 
-### Some additional notes
+## Some additional notes
 
 *Tests*: Not sure what was the requirement for test coverage in this task. 
 If I am not mistaken there was no distinct requirement for app being fully covered with tests, though evaluation criteria included "testability", but that means whether system is testable, not being covered with tests.
