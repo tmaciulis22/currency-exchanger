@@ -3,8 +3,6 @@ package com.example.currencyexchanger.ui.view.exchange
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -51,21 +49,13 @@ fun CurrencySelector(
                 )
             }
         }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            currencies.forEach {
-                DropdownMenuItem(onClick = {
-                    onSelectedCurrency(it)
-                    expanded = false
-                }) {
-                    Text(
-                        text = it,
-                        color = MaterialTheme.colors.onBackground
-                    )
-                }
-            }
+        if (expanded) {
+            CurrencySelectorDialog(
+                selectedCurrency = selectedCurrency,
+                currencies = currencies,
+                onDismissRequest = { expanded = false },
+                onSelectedCurrency = onSelectedCurrency
+            )
         }
     }
 }

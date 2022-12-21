@@ -63,7 +63,7 @@ class ExchangeViewModel @Inject constructor(
             val fromCurrency = _uiState.value.fromCurrency ?: return@launch
             val toCurrency = _uiState.value.toCurrency ?: return@launch
 
-            if (fromCurrency == toCurrency) return@launch
+            if (fromCurrency == toCurrency || fromAmount <= 0.0) return@launch
 
             val conversionResult = conversionManager.convert(
                 fromAmount,
