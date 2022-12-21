@@ -36,7 +36,12 @@ class BalancesManager @Inject constructor(
             currency = toBalance.currency
         )
 
-        balanceRepository.insertBalances(listOf(newFromBalance, newToBalance))
+        if (newFromBalance.amount == 0.0) {
+            balanceRepository.deleteBalance(newFromBalance)
+            balanceRepository.insertBalances(listOf(newToBalance))
+        } else {
+            balanceRepository.insertBalances(listOf(newFromBalance, newToBalance))
+        }
 
         return Result.success(Unit)
     }

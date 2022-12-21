@@ -12,4 +12,7 @@ interface BalanceEntityDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(balanceEntities: List<BalanceEntity>)
+
+    @Delete
+    suspend fun delete(balanceEntity: BalanceEntity)
 }
