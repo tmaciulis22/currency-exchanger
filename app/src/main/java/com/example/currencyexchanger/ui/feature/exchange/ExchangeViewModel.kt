@@ -2,7 +2,6 @@ package com.example.currencyexchanger.ui.feature.exchange
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.currencyexchanger.data.model.ConversionResult
 import com.example.currencyexchanger.domain.BalancesManager
 import com.example.currencyexchanger.domain.ConversionManager
 import com.example.currencyexchanger.domain.ExchangeRatesSyncManager
@@ -30,12 +29,10 @@ class ExchangeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ExchangeUIState())
     val uiState = _uiState.asStateFlow()
 
-    private val conversionResultState = MutableStateFlow<ConversionResult?>(null)
-
     val dataState = combine(
         balancesManager.balances,
         exchangeRatesSyncManager.exchangeRates,
-        conversionResultState,
+        conversionManager.conversionResult,
     ) { balances, exchangeRates, result ->
         if (_uiState.value.selectedCurrencies.isEmpty()) {
             _uiState.update {
@@ -94,13 +91,12 @@ class ExchangeViewModel @Inject constructor(
             val fromCurrency = it.fromCurrency ?: return
             val toCurrency = it.toCurrency ?: return
 
-            convert(
-                amount = newValue.toDouble(),
-                fromCurrency = fromCurrency,
-                toCurrency = toCurrency
+            val conversionResult = conversionManager.convert(
+                newValue.toDouble(),
+                dataState.value.rates[fromCurrency] ?: 1.0,
+                dataState.value.rates[toCurrency] ?: 1.0
             )
-
-            newMap[CurrencyInputType.Receive] = conversionResultState.value?.to.toString()
+            newMap[CurrencyInputType.Receive] = conversionResult.to.toString()
 
             it.copy(exchangerInputValues = newMap)
         }
@@ -124,19 +120,5 @@ class ExchangeViewModel @Inject constructor(
         _uiState.update {
             it.copy(showSuccessDialog = false)
         }
-    }
-
-    private fun convert(
-        amount: Double,
-        fromCurrency: String,
-        toCurrency: String
-    ) {
-        val conversionResult = conversionManager.convert(
-            amount,
-            dataState.value.rates[fromCurrency] ?: 1.0,
-            dataState.value.rates[toCurrency] ?: 1.0
-        )
-
-        conversionResultState.value = conversionResult
     }
 }
