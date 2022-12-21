@@ -5,7 +5,7 @@ data class Balance(
     val currency: String = DEFAULT_CURRENCY
 ) {
     companion object {
-        private const val DEFAULT_AMOUNT = 1000.0
-        private const val DEFAULT_CURRENCY = "EUR"
+        const val DEFAULT_AMOUNT = 1000.0
+        const val DEFAULT_CURRENCY = "EUR"
     }
 }

@@ -53,6 +53,7 @@ class ExchangeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            balancesManager.createInitialBalanceIfNeeded()
             exchangeRatesSyncManager.start()
         }
     }

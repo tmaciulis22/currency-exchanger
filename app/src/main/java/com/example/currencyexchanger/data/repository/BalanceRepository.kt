@@ -13,17 +13,12 @@ class BalanceRepository(
         balanceEntityDAO
             .getAll()
             .map { entities ->
-                if (entities.isNotEmpty()) {
-                    entities.map {
-                        Balance(
-                            amount = it.amount,
-                            currency = it.currency
-                        )
-                    }.sortedBy { it.amount }
-                } else {
-                    balanceEntityDAO.insertAll(listOf(BalanceEntity()))
-                    listOf(Balance())
-                }
+                entities.map {
+                    Balance(
+                        amount = it.amount,
+                        currency = it.currency
+                    )
+                }.sortedBy { it.amount }
             }
 
     suspend fun insertBalances(balances: List<Balance>) = balanceEntityDAO.insertAll(
