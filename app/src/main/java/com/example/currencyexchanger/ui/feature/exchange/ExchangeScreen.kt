@@ -30,8 +30,8 @@ fun ExchangeScreen(
             onInputChange = {
                 exchangeViewModel.onExchangeInputChange(it)
             },
-            fromCurrencies = dataState.value.balances.map { it.currency },
-            toCurrencies = dataState.value.rates.keys.toList(),
+            fromCurrencies = dataState.value.fromCurrencies,
+            toCurrencies = dataState.value.toCurrencies,
             onSelectedCurrency = { type, newCurrency ->
                 exchangeViewModel.onSelectedCurrency(type, newCurrency)
             },

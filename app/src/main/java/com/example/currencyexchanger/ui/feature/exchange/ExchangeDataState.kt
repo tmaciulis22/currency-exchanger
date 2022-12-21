@@ -16,4 +16,9 @@ data class ExchangeDataState(
         get() = conversionResult?.to
     val commissionFee
         get() = conversionResult?.fee
+
+    val fromCurrencies
+        get() = balances.map { it.currency }
+    val toCurrencies
+        get() = rates.keys.toList()
 }

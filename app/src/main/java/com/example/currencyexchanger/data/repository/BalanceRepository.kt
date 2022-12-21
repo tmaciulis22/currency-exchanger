@@ -19,7 +19,7 @@ class BalanceRepository(
                             amount = it.amount,
                             currency = it.currency
                         )
-                    }.sortedBy { it.currency }
+                    }.sortedBy { it.amount }
                 } else {
                     balanceEntityDAO.insertAll(listOf(BalanceEntity()))
                     listOf(Balance())

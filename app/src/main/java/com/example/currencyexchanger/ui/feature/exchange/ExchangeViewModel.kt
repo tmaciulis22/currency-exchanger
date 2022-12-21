@@ -2,6 +2,8 @@ package com.example.currencyexchanger.ui.feature.exchange
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.currencyexchanger.data.model.Balance
+import com.example.currencyexchanger.data.model.ExchangeRates
 import com.example.currencyexchanger.domain.BalancesManager
 import com.example.currencyexchanger.domain.ConversionManager
 import com.example.currencyexchanger.domain.ExchangeRatesSyncManager
@@ -34,16 +36,9 @@ class ExchangeViewModel @Inject constructor(
         exchangeRatesSyncManager.exchangeRates,
         conversionManager.conversionResult,
     ) { balances, exchangeRates, result ->
-        if (_uiState.value.selectedCurrencies.isEmpty()) {
-            _uiState.update {
-                it.copy(
-                    selectedCurrencies = mapOf(
-                        CurrencyInputType.Sell to (balances.firstOrNull()?.currency ?: "EUR"),
-                        CurrencyInputType.Receive to (exchangeRates.rates.keys.firstOrNull() ?: "USD")
-                    )
-                )
-            }
-        }
+        if (_uiState.value.selectedCurrencies.isEmpty())
+            initSelectedCurrencies(balances, exchangeRates)
+
         ExchangeDataState(
             balances = balances,
             rates = exchangeRates.rates,
@@ -111,7 +106,7 @@ class ExchangeViewModel @Inject constructor(
             it.copy(selectedCurrencies = newMap)
         }
 
-        _uiState.value.exchangerInputValues[CurrencyInputType.Sell]?.let {
+        _uiState.value.sellAmount?.let {
             if (it.toDouble() > 0.0) {
                 onExchangeInputChange(it)
             }
@@ -121,6 +116,17 @@ class ExchangeViewModel @Inject constructor(
     fun onSuccessDialogClose() {
         _uiState.update {
             it.copy(showSuccessDialog = false)
+        }
+    }
+
+    private fun initSelectedCurrencies(balances: List<Balance>, exchangeRates: ExchangeRates) {
+        _uiState.update {
+            it.copy(
+                selectedCurrencies = mapOf(
+                    CurrencyInputType.Sell to (balances.firstOrNull()?.currency ?: "EUR"),
+                    CurrencyInputType.Receive to (exchangeRates.rates.keys.firstOrNull() ?: "USD")
+                )
+            )
         }
     }
 }

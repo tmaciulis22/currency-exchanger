@@ -11,6 +11,9 @@ data class ExchangeUIState(
     val showSuccessDialog: Boolean = false
 ) {
 
+    val sellAmount
+        get() = exchangerInputValues[CurrencyInputType.Sell]
+
     val fromCurrency
         get() = selectedCurrencies[CurrencyInputType.Sell]
     val toCurrency
