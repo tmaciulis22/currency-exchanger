@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -72,10 +71,8 @@ class ExchangeViewModel @Inject constructor(
 
             if (updateBalancesResult.isSuccess) {
                 conversionManager.updateConversionsCount()
-                withContext(Dispatchers.Main) {
-                    _uiState.update {
-                        it.copy(showSuccessDialog = true)
-                    }
+                _uiState.update {
+                    it.copy(showSuccessDialog = true)
                 }
             }
         }

@@ -42,7 +42,7 @@ fun CurrencyInput(
             value = inputValue,
             onValueChange = {
                 it.toDoubleOrNull()?.let { inputAsDouble ->
-                    if (inputAsDouble > 0.00) {
+                    if (inputAsDouble >= 0.0) {
                         onInputChange(inputAsDouble.round().toString())
                     }
                 }
