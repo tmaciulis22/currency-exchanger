@@ -18,7 +18,7 @@ class ExchangeRatesSyncManagerTest {
         coEvery { mockExchangeRatesRepository.updateExchangeRates() } returns Unit
         coEvery { mockExchangeRatesRepository.getExchangeRates() } returns flow {  }
 
-        val manager = ExchangeRatesSyncManager(mockExchangeRatesRepository, refreshRate = 1L)
+        val manager = ExchangeRatesSyncManager(mockExchangeRatesRepository, refreshRate = 5L)
 
         val job = launch {
             manager.start()
