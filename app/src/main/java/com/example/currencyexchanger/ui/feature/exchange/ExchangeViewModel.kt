@@ -3,6 +3,7 @@ package com.example.currencyexchanger.ui.feature.exchange
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.currencyexchanger.data.model.Balance
+import com.example.currencyexchanger.data.model.ConversionResult
 import com.example.currencyexchanger.data.model.ExchangeRates
 import com.example.currencyexchanger.domain.BalancesManager
 import com.example.currencyexchanger.domain.ConversionManager
@@ -37,6 +38,7 @@ class ExchangeViewModel @Inject constructor(
     ) { balances, exchangeRates, result ->
         if (_uiState.value.selectedCurrencies.isEmpty())
             initSelectedCurrencies(balances, exchangeRates)
+        result?.let { updateReceiveValue(it) }
 
         ExchangeDataState(
             balances = balances,
@@ -57,12 +59,17 @@ class ExchangeViewModel @Inject constructor(
 
     fun onSubmit() {
         viewModelScope.launch(Dispatchers.IO) {
-            val conversionResult = dataState.value.conversionResult ?: return@launch
+            val fromAmount = _uiState.value.sellAmount?.toDoubleOrNull() ?: return@launch
             val fromCurrency = _uiState.value.fromCurrency ?: return@launch
             val toCurrency = _uiState.value.toCurrency ?: return@launch
 
             if (fromCurrency == toCurrency) return@launch
 
+            val conversionResult = conversionManager.convert(
+                fromAmount,
+                dataState.value.rates[fromCurrency] ?: 1.0,
+                dataState.value.rates[toCurrency] ?: 1.0
+            )
             val updateBalancesResult = balancesManager.updateBalances(
                 conversionResult,
                 fromCurrency,
@@ -85,12 +92,11 @@ class ExchangeViewModel @Inject constructor(
             val fromCurrency = it.fromCurrency ?: return
             val toCurrency = it.toCurrency ?: return
 
-            val conversionResult = conversionManager.convert(
+            conversionManager.convert(
                 newValue.toDouble(),
                 dataState.value.rates[fromCurrency] ?: 1.0,
                 dataState.value.rates[toCurrency] ?: 1.0
             )
-            newMap[CurrencyInputType.Receive] = conversionResult.to.toString()
 
             it.copy(exchangerInputValues = newMap)
         }
@@ -124,6 +130,14 @@ class ExchangeViewModel @Inject constructor(
                     CurrencyInputType.Receive to (exchangeRates.rates.keys.firstOrNull() ?: "USD")
                 )
             )
+        }
+    }
+
+    private fun updateReceiveValue(conversionResult: ConversionResult) {
+        _uiState.update {
+            val newMap = it.exchangerInputValues.toMutableMap()
+            newMap[CurrencyInputType.Receive] = conversionResult.to.toString()
+            it.copy(exchangerInputValues = newMap)
         }
     }
 }
